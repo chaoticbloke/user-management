@@ -5,10 +5,14 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.users.management.domain.UserPrincipal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
 
 public class JwtTokenProvider {
 
@@ -26,6 +30,14 @@ public class JwtTokenProvider {
                 .withIssuedAt(new Date()).withSubject(userPrincipal.getUsername())
                 .withArrayClaim(String.valueOf(userPrincipal.getAuthorities()),claims)
                 .withExpiresAt(futureDate).sign(Algorithm.HMAC512(secret.getBytes()));
+    }
+    public List<GrantedAuthority> getAuthorities(String token) {
+        String [] claims = getClaimsFromToken(token);
+        return stream(claims).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+    }
+
+    private String[] getClaimsFromToken(String token) {
+        return null;
     }
 
     private String[] getClaimsFromUser(UserPrincipal user) {
