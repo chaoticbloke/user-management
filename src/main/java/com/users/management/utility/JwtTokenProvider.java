@@ -1,7 +1,9 @@
 package com.users.management.utility;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.users.management.domain.UserPrincipal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,7 +39,19 @@ public class JwtTokenProvider {
     }
 
     private String[] getClaimsFromToken(String token) {
-        return null;
+        JWTVerifier jwtVerifier = getJwtVerifier();
+        return jwtVerifier.verify(token).getClaim("authorities").asArray(String.class);
+    }
+
+    private JWTVerifier getJwtVerifier() {
+        JWTVerifier jwtVerifier;
+      try {
+          Algorithm algorithm = Algorithm.HMAC512(secret);
+          jwtVerifier = JWT.require(algorithm).withIssuer("TEST_COMPANY_NAME").build();
+      } catch (JWTVerificationException jwtVerificationException) {
+          throw new JWTVerificationException("TOKEN CAN NOT BE VERIFIED!");
+      }
+        return jwtVerifier;
     }
 
     private String[] getClaimsFromUser(UserPrincipal user) {
