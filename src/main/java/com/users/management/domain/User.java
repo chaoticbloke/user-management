@@ -3,6 +3,7 @@ package com.users.management.domain;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.util.Date;
 
 @Entity
 @Data
+@Table(name="USERS")
 public class User implements Serializable {
 //implements Serializable because User entity will go through transition from Java class to Database
     @Id
